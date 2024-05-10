@@ -102,12 +102,10 @@ def load_model():
     model = ChatModel(model_id="mustafaaljadery/gemma-2b-10m", device="cuda")
     return model
 
-
 @st.cache_resource
 def load_encoder():
     encoder = rag_util.Encoder(model_name="sentence-transformers/all-MiniLM-L12-v2", device="cpu")
     return encoder
-
 
 model = load_model()
 encoder = load_encoder()
@@ -119,7 +117,6 @@ def save_file(uploaded_file):
     with open(file_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
     return file_path
-
 
 # Sidebar for user inputs
 with st.sidebar:
