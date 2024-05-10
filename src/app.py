@@ -1,9 +1,11 @@
 import os
+import tempfile
 import streamlit as st
 from model import ChatModel
 import rag_util
 
-FILES_DIR = "/content/drive/MyDrive/LLM_RAG_Bot/files"
+# Set a temporary directory for caching
+CACHE_DIR = tempfile.mkdtemp()
 
 # Set page configuration
 st.set_page_config(
@@ -99,12 +101,12 @@ st.markdown(header_html, unsafe_allow_html=True)
 # Load the models using cache for better performance
 @st.cache_resource
 def load_model():
-    model = ChatModel(model_id="mustafaaljadery/gemma-2b-10m", device="cuda")
+    model = ChatModel(model_id="mustafaaljadery/gemma-2b-10m", device="cuda", cache_dir=CACHE_DIR)
     return model
 
 @st.cache_resource
 def load_encoder():
-    encoder = rag_util.Encoder(model_name="sentence-transformers/all-MiniLM-L12-v2", device="cpu")
+    encoder = rag_util.Encoder(model_name="sentence-transformers/all-MiniLM-L12-v2", device="cpu", cache_dir=CACHE_DIR)
     return encoder
 
 model = load_model()
@@ -113,7 +115,7 @@ encoder = load_encoder()
 # Helper function to save uploaded files
 def save_file(uploaded_file):
     """Save uploaded PDF files to disk"""
-    file_path = os.path.join(FILES_DIR, uploaded_file.name)
+    file_path = os.path.join(CACHE_DIR, uploaded_file.name)
     with open(file_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
     return file_path
