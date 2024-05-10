@@ -2,15 +2,13 @@ import os
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
-CACHE_DIR = "/content/drive/LLM_RAG_Bot/models"
-
 class ChatModel:
-    def __init__(self, model_id: str = "mustafaaljadery/gemma-2b-10m", device="cuda"):
-        self.tokenizer = AutoTokenizer.from_pretrained(model_id, cache_dir=CACHE_DIR)
+    def __init__(self, model_id: str = "mustafaaljadery/gemma-2b-10m", device="cuda", cache_dir=None):
+        self.tokenizer = AutoTokenizer.from_pretrained(model_id, cache_dir=cache_dir)
 
         quantization_config = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.bfloat16)
 
-        self.model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", quantization_config=quantization_config, cache_dir=CACHE_DIR)
+        self.model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", quantization_config=quantization_config, cache_dir=cache_dir)
 
         self.model.eval()
         self.chat = []
